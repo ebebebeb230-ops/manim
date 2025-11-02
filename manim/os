@@ -1,0 +1,42 @@
+from manim import *
+
+class AerisBoot(Scene):
+    def construct(self):
+        # 배경색
+        self.camera.background_color = "#000000"
+
+        # 로고 (심볼)
+        logo = SVGMobject("aeris_symbol.svg")  # 로고 파일 (같은 폴더에)
+        logo.set_color("#00CFFF")
+        logo.scale(2)
+        logo.set_opacity(0)
+
+        # AERIS 텍스트 (왼쪽 아래)
+        text = Text("AERIS", font="Segoe UI", color="#00CFFF")
+        text.scale(0.5)
+        text.to_edge(LEFT).shift(DOWN * 3.2 + RIGHT * 0.3)
+
+        # 로딩 점 6개
+        dots = VGroup(*[Dot(radius=0.07, color="#00CFFF") for _ in range(6)])
+        dots.arrange(RIGHT, buff=0.25)
+        dots.move_to(DOWN * 2.5)
+
+        # 등장 애니메이션
+        self.play(FadeIn(logo, run_time=2))
+        self.play(FadeIn(text, run_time=1))
+
+        # 로딩 점 회전 (윈도우10 느낌)
+        def spin_dots(mob, dt):
+            mob.rotate(dt * TAU / 3, about_point=ORIGIN)
+
+        rotating_group = VGroup(*dots)
+        rotating_group.move_to(DOWN * 2.5)
+        rotating_group.add_updater(spin_dots)
+        self.add(rotating_group)
+
+        # 유지 후 페이드아웃
+        self.wait(6)
+        self.play(FadeOut(logo), FadeOut(text), FadeOut(rotating_group))
+
+# 실행 명령:
+# manim -pql aeris_boot.py AerisBoot
